@@ -10,11 +10,13 @@ def split_unquoted_newlines(stmt):
 
     Unlike str.splitlines(), this will ignore CR/LF/CR+LF if the requisite
     character is inside of a string."""
-    pass
+    return [part.strip() for part in SPLIT_REGEX.split(stmt) if part.strip()]
 
 def remove_quotes(val):
     """Helper that removes surrounding quotes from strings."""
-    pass
+    if val and val[0] in ('"', "'") and val[-1] == val[0]:
+        return val[1:-1]
+    return val
 
 def recurse(*cls):
     """Function decorator to help with recursion
@@ -22,7 +24,14 @@ def recurse(*cls):
     :param cls: Classes to not recurse over
     :return: function
     """
-    pass
+    def wrap(f):
+        def wrapped(tlist):
+            for sgroup in tlist.get_sublists():
+                if not isinstance(sgroup, cls):
+                    wrapped(sgroup)
+            f(tlist)
+        return wrapped
+    return wrap
 
 def imt(token, i=None, m=None, t=None):
     """Helper function to simplify comparisons Instance, Match and TokenType
@@ -32,8 +41,21 @@ def imt(token, i=None, m=None, t=None):
     :param t: TokenType or Tuple/List of TokenTypes
     :return:  bool
     """
-    pass
+    if i is not None:
+        if isinstance(i, (list, tuple)):
+            return isinstance(token, tuple(i))
+        return isinstance(token, i)
+    if m is not None:
+        if isinstance(m[0], (list, tuple)):
+            return any(token.match(*_m) for _m in m)
+        return token.match(*m)
+    if t is not None:
+        return token.ttype in (t if isinstance(t, (list, tuple)) else (t,))
+    return False
 
 def consume(iterator, n):
     """Advance the iterator n-steps ahead. If n is none, consume entirely."""
-    pass
+    if n is None:
+        deque(iterator, maxlen=0)
+    else:
+        next(itertools.islice(iterator, n, n), None)
