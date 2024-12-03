@@ -16,6 +16,8 @@ from io import TextIOWrapper
 import sqlparse
 from sqlparse.exceptions import SQLParseError
 
-def _error(msg):
+def _error(msg, exit_=None):
     """Print msg and optionally exit with return code exit_."""
-    pass
+    sys.stderr.write(f"Error: {msg}\n")
+    if exit_ is not None:
+        sys.exit(exit_)
