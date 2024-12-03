@@ -19,4 +19,7 @@ class ReindentFilter:
 
     def _flatten_up_to_token(self, token):
         """Yields all tokens up to token but excluding current."""
-        pass
+        for t in self._curr_stmt.flatten():
+            if t == token:
+                break
+            yield t
