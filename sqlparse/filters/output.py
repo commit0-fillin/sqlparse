@@ -6,6 +6,7 @@ class OutputFilter:
     def __init__(self, varname='sql'):
         self.varname = self.varname_prefix + varname
         self.count = 0
+        self.queries = []
 
 class OutputPythonFilter(OutputFilter):
     pass
